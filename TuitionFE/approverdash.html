@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
+  <style media="screen">
+
+    body {
+      font-size: 1.3rem;
+      background-image: url('images/bg-01.jpg');
+    }
+
+    .request {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .request > * {
+      margin: .25rem;
+    }
+
+    .view_request {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0px 0px 24px dimgrey;
+      padding: 0rem 1rem 1rem 1rem;
+    }
+
+    #approve {
+      display: none;
+    }
+
+    .approve {
+      display: block !important;
+      margin: 1rem auto;
+    }
+
+    #approveName {
+      display: none;
+    }
+
+    .create_request {
+      background-color: white;
+      margin-bottom: 2.5rem;
+      border-radius: 10px;
+      box-shadow: 0px 0px 24px dimgrey;
+      padding: 1rem 4rem 1rem 4rem;
+    }
+
+    .create_request_inp {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .create_request_inp > * {
+      margin: .5rem;
+    }
+
+    .empHandler {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .empInput {
+      margin-bottom: 1rem;
+    }
+
+    tr {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    tr > * {
+      font-family: 'Raleway', sans-serif;
+    }
+
+    td {
+      padding: .25rem 3rem .25rem 3rem;
+    }
+
+    #num {
+      font-family: 'Raleway', sans-serif;
+    }
+
+    #none {
+      font-family: 'Raleway', sans-serif;
+    }
+
+    #amount {
+      font-family: 'Raleway', sans-serif;
+    }
+
+    h1 {
+      font-family: 'Raleway', sans-serif;
+      font-weight: 400;
+      margin-bottom: 2rem !important;
+    }
+
+  </style>
+  <title>Approver Dashboard</title>
+</head>
+<body>
+  <div class="request">
+
+    <div class="view_request">
+
+      <div class="empHandler">
+        <h1>View Requests</h1>
+
+        <!-- ↓ get employee's info -->
+        <div class="empInput">
+          <input type="text" id="empName" value="" placeholder="Enter Employee Name">
+          <button type="button" onclick="getEmployee()">Get Employee ID</button>
+          <span id="num"></span>
+        </div>
+
+        <!-- ↓ with emp's info, use the ID to find how many requests they have-->
+        <div class="reqInput">
+          <input type="number" id="empId" value="" placeholder="Enter Employee ID">
+          <button type="button" onclick="getRequest()">Obtain Request</button>
+          <span id="none"></span>
+        </div>
+
+      </div>
+
+      <table>
+        <tbody>
+          <tr>
+            <td>Event Cost</td>
+            <td id="cost"></td>
+          </tr>
+          <tr>
+            <td>Employee ID</td>
+            <td id="employeeId"></td>
+          </tr>
+          <tr>
+            <td>Date</td>
+            <td id="date"></td>
+          </tr>
+          <tr>
+            <td>Event</td>
+            <td id="event"></td>
+          </tr>
+          <tr>
+            <td>Grade</td>
+            <td id="grade"></td>
+          </tr>
+          <tr>
+            <td>Location</td>
+            <td id="location"></td>
+          </tr>
+          <tr>
+            <td>Request ID</td>
+            <td id="requestId"></td>
+          </tr>
+          <tr>
+            <td>Status</td>
+            <td id="status"></td>
+          </tr>
+        </tbody>
+      </table>
+      <input type="text" id="approveName" value="" placeholder="Name of Approver">
+      <button type="button" id="approve" onclick="approveRequest()">Approve Request</button>
+      <span id="amount"></span>
+
+    </div>
+
+    <div class="create_request">
+      <h1>Request Form</h1>
+      <div class="create_request_inp">
+        <input type="number" id="idInput" value="" placeholder="Enter Your Employee ID">
+        <input type="number" id="eventInput" value="" placeholder="Enter Type of Event">
+        <input type="number" id="costInput" value="" placeholder="Cost Of Event">
+        <input type="text" id="gradeInput" value="" placeholder="Grade Earned For Event">
+        <input type="date" id="dateInput" value="">
+        <input type="text" id="locationInput" value="" placeholder="Location Of Event">
+        <button type="button" onclick="postRequest()">Submit Request</button>
+      </div>
+    </div>
+
+  </div>
+</body>
+<script type="text/javascript">
+
+    async function getEmployee() {
+
+      const name = document.getElementById("empName").value;
+
+      const url = `http://localhost:5000/employee`;
+
+      const res = await fetch(url)
+      const body = await res.json()
+
+      let currentEmp = body.find(emp => emp.fullName === name);
+      console.log(currentEmp);
+      document.getElementById("num").innerHTML = ("Employee ID: " + currentEmp.empId);
+
+    }
+
+    function popTable(currentReq) {
+
+      let time = new Date(currentReq.eventDate);
+      let convertTime = (time.getMonth() + 1) + '/' + time.getDate() + '/' + time.getFullYear();
+      console.log(convertTime);
+
+      document.getElementById("cost").innerHTML = currentReq.cost
+      document.getElementById("employeeId").innerHTML = currentReq.employeeId
+      document.getElementById("date").innerHTML = convertTime
+      document.getElementById("event").innerHTML = currentReq.eventId
+      document.getElementById("grade").innerHTML = currentReq.grade
+      document.getElementById("location").innerHTML = currentReq.location
+      document.getElementById("requestId").innerHTML = currentReq.reqId
+      document.getElementById("status").innerHTML = currentReq.status
+
+    }
+
+    async function getRequest() {
+
+      const emp = document.getElementById("empId").value;
+
+      const url = `http://localhost:5000/employee/${emp}/request`;
+      const res = await fetch(url)
+
+      let none = document.getElementById("none");
+      if (res.status !== 404) {
+
+        const data = await res.json()
+        let currentReq = data.find(req => req.reqId);
+
+        popTable(currentReq)
+        let approve = document.getElementById("approve");
+        let approveName = document.getElementById("approveName");
+        approve.classList.add("approve");
+        approveName.classList.add("approve");
+        document.getElementById("none").style.display = 'none';
+
+      } else {
+        none.innerHTML = ("Employee Has No Requests");
+      }
+
+    }
+
+    async function postRequest() {
+
+      const idVal = document.getElementById("idInput").value;
+      const eventVal = document.getElementById("eventInput").value;
+      const costVal = document.getElementById("costInput").value;
+      const gradeVal = document.getElementById("gradeInput").value;
+      const dateVal = document.getElementById("dateInput").value;
+      const locationVal = document.getElementById("locationInput").value;
+
+      const d = new Date(dateVal);
+      let time = d.getTime()
+      console.log(locationVal);
+      console.log(d);
+      console.log(time);
+
+
+      console.log(dateVal);
+
+      const data = {
+        cost: costVal,
+        grade: gradeVal,
+        eventDate: time,
+        location: locationVal,
+        eventId: eventVal
+      }
+
+      const url = `http://localhost:5000/employee/${idVal}/request`;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+
+      const body = await res.json();
+      console.log(body);
+      if (body) {
+        alert("Request Successfully Submitted!")
+      } else {
+        alert("Failed To Submit Request")
+      }
+    }
+
+    async function approveRequest() {
+
+      const name = document.getElementById("approveName").value;
+      const cost = document.getElementById("cost").textContent;
+      const eventId = document.getElementById("event").textContent;
+      let empIdVal = document.getElementById("employeeId").textContent;
+      let reqIdVal = document.getElementById("requestId").textContent;
+
+      const url = `http://localhost:5000/employee`;
+      const res = await fetch(url)
+      const body = await res.json()
+
+      let currentEmp = body.find(emp => emp.fullName === name);
+      let status = document.getElementById("status")
+
+      if (currentEmp.supervId === 1 && status.textContent === 'pending supervisor') {
+
+        const data = {
+          action: 'approve'
+        }
+
+        const url = `http://localhost:5000/employee/${empIdVal}/request/${reqIdVal}`;
+        const res = await fetch(url, {
+          method: "PATCH",
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+        console.log("Approved by Supervisor!");
+
+      } else if (currentEmp.supervId === 2 && status.textContent === 'pending department head') {
+
+        const data = {
+          action: 'approve'
+        }
+
+        const url = `http://localhost:5000/employee/${empIdVal}/request/${reqIdVal}`;
+        const res = await fetch(url, {
+          method: "PATCH",
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+        console.log("Approved by Department Head!");
+
+      } else if (currentEmp.supervId === 3 && status.textContent === 'pending benefits coordinator') {
+
+        const data = {
+          action: 'approve'
+        }
+
+        const url = `http://localhost:5000/employee/${empIdVal}/request/${reqIdVal}`;
+        const res = await fetch(url, {
+          method: "PATCH",
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+
+        const evUrl = `http://localhost:5000/event/${eventId}`;
+        const evRes = await fetch(evUrl)
+        const evBody = await evRes.json()
+
+        let reAmount = Math.floor(parseInt(cost) * (evBody.percentage * .01));
+        document.getElementById("amount").innerHTML = ("The Tuition Reimburesment amount will be: $" + reAmount);
+        console.log("Tuition Reimbursement Approved!");
+
+      } else if (status.textContent === 'tuition reimbursement approved') {
+        console.log("Tuition Reimburesment Has Already Been Approved.");
+      }
+      else {
+        console.log("You are not the designated approver");
+      }
+
+    }
+
+</script>
+</html>
