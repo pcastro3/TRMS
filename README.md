@@ -16,3 +16,5 @@ The Tuition Reimbursement System, TRMS, allows users to submit reimbursements fo
 - Set up a database connection with your AWS RDS
 - Install Flask, Flask-cors, and Psycopg2
 - Run the application and open login.html in a web browser
+## Usage
+Log in with credentials. If you are a standard user, you will only be able to create a request. Fill in the required fields and submit the request. If you are an approver (supervisor, department head, benefits coordinator), use the tools to find which employees have requests. Approve or deny their requests depending on whether they meet the requirements for tuition reimbursement.
