@@ -12,4 +12,7 @@ Designated approvers can approve or deny requests from users
 Upon approval, tuition amount is automatically calculated based on the type of course or training
 Getting Started
 Ensure Python 3 is installed
-Clone this repo "git clone 
+Clone this repo "git clone https://github.com/pcastro3/TRMS.git"
+Set up a database connection with your AWS RDS
+Install Flask, Flask-cors, and Psycopg2
+Run the application and open login.html in a web browser
